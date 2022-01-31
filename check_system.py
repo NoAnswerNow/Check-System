@@ -71,10 +71,10 @@ def send_email() :
 
 
 def main():
-    #check_ip()
-    #system_info()
-    #ports_info()
-    #check_wifi()
+    check_ip()
+    system_info()
+    ports_info()
+    check_wifi()
     send_email()
 
 
