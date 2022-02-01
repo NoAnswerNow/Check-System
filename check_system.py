@@ -1,6 +1,7 @@
 import subprocess
 import requests
 from bs4 import BeautifulSoup
+import lxml
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
